@@ -66,6 +66,8 @@ import Foundation
     case remoteExtendedErrorVerificationFailed   = 32 // 20 + 0x0C
     case remoteExtendedErrorInsufficientSpace    = 33 // 20 + 0x0D
     
+    case remoteExtenedErrorServiceNil = 34 // 20 + 0x0E
+    
     // Experimental Buttonless DFU errors (received value + 9000 as they
     // overlap legacy and secure DFU errors).
     case remoteExperimentalButtonlessDFUSuccess               = 9001 // 9000 + 1

@@ -210,11 +210,20 @@ internal class SecureDFUPeripheral : BaseCommonDFUPeripheral<SecureDFUExecutor, 
     func sendNextObject(from range: Range<Int>, of firmware: DFUFirmware,
                         andReportProgressTo progress: DFUProgressDelegate?,
                         on queue: DispatchQueue) {
-        dfuService!.sendNextObject(from: range, of: firmware,
-            andReportProgressTo: progress, on: queue,
-            onSuccess: { self.delegate?.peripheralDidReceiveObject() },
-            onError: defaultErrorCallback
-        )
+        if let dfuService = dfuService {
+            dfuService.sendNextObject(from: range, of: firmware,
+                andReportProgressTo: progress, on: queue,
+                onSuccess: { self.delegate?.peripheralDidReceiveObject() },
+                onError: defaultErrorCallback
+            )
+        }
+        else {
+            // the DFU service has unxpectedly gone nil
+            // See: https://github.com/NordicSemiconductor/IOS-Pods-DFU-Library/issues/375
+            // Here we prevent a crash, but send back an error.
+            logger.e("dfuService unexpectedly nil.  We cannot continue")
+            self.delegate?.error(DFUError.remoteExtenedErrorServiceNil, didOccurWithMessage: "dfuService unexpectedly nil")
+        }
     }
     
     /**
